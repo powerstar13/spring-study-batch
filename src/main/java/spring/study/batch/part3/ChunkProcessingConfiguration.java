@@ -1,11 +1,14 @@
 package spring.study.batch.part3;
 
+import io.micrometer.core.instrument.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -14,6 +17,7 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,15 +38,20 @@ public class ChunkProcessingConfiguration {
         return jobBuilderFactory.get("chunkProcessJob")
             .incrementer(new RunIdIncrementer())
             .start(this.taskBaseStep())
-            .next(this.chunkBaseStep())
+            .next(this.chunkBaseStep(null)) // chunkBaseStep() 메서드의 경우 @JobScope에서 chunkSize를 가져다 쓸 것이기 때문에 null로 파라미터를 전달해도 된다.
             .build();
     }
 
     @Bean
-    public Step chunkBaseStep() {
+    @JobScope // @Value 애노테이션을 사용하기 위해 사용
+    public Step chunkBaseStep(@Value("#{jobParameters[chunkSize]}") String chunkSize) { // WARN: lombok이 아닌 spring에서 제공하는 @Value 애노테이션을 사용
 
         return stepBuilderFactory.get("chunkBaseStep")
-            .<String, String>chunk(10) // 100개의 데이터가 있을 경우 10개씩 데이터를 나누어 처리하라는 뜻이다.
+            .<String, String>chunk(
+                StringUtils.isNotEmpty(chunkSize) ?
+                    Integer.parseInt(chunkSize)
+                    : 10
+            ) // 전달된 개수만큼 데이터를 나누어 처리하라는 뜻이다.
             .reader(this.itemReader())
             .processor(this.itemProcessor())
             .writer(this.itemWriter())
@@ -84,8 +93,11 @@ public class ChunkProcessingConfiguration {
         return (contribution, chunkContext) -> {
 
             StepExecution stepExecution = contribution.getStepExecution();
+            JobParameters jobParameters = stepExecution.getJobParameters();
 
-            int chunkSize = 10;
+            String chunkSizeStr = jobParameters.getString("chunkSize", "10");
+            int chunkSize = StringUtils.isNotEmpty(chunkSizeStr) ? Integer.parseInt(chunkSizeStr) : 10;
+
             int fromIndex = stepExecution.getReadCount(); // 현재까지 읽은 개수를 가져온다.
             int toIndex = fromIndex + chunkSize;
 
