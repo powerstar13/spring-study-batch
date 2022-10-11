@@ -11,7 +11,9 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
+import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
@@ -20,6 +22,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,7 @@ public class ItemWriterConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final DataSource dataSource;
+    private final EntityManagerFactory entityManagerFactory;
     
     @Bean
     public Job itemWriterJob() throws Exception {
@@ -39,7 +43,8 @@ public class ItemWriterConfiguration {
         return this.jobBuilderFactory.get("itemWriterJob")
             .incrementer(new RunIdIncrementer())
             .start(this.csvItemWriterStep())
-            .next(this.jdbcBatchItemWriterStep())
+//            .next(this.jdbcBatchItemWriterStep())
+            .next(this.jpaItemWriterStep())
             .build();
     }
     
@@ -61,6 +66,27 @@ public class ItemWriterConfiguration {
             .reader(this.itemReader())
             .writer(this.jdbcBatchItemWriter())
             .build();
+    }
+    
+    @Bean
+    public Step jpaItemWriterStep() throws Exception {
+    
+        return stepBuilderFactory.get("jpaItemWriterStep")
+            .<Person, Person>chunk(10)
+            .reader(this.itemReader())
+            .writer(this.jpaItemWriter())
+            .build();
+    }
+    
+    private ItemWriter<Person> jpaItemWriter() throws Exception {
+    
+        JpaItemWriter<Person> itemWriter = new JpaItemWriterBuilder<Person>()
+            .entityManagerFactory(entityManagerFactory)
+            .usePersist(true) // ID를 직접 할당하지 않는 이상 usePersist(true)를 설정하는 것이 성능에 좋다. (SELECT 없이 INSERT query만 실행된다.)
+            .build();
+        itemWriter.afterPropertiesSet();
+    
+        return itemWriter;
     }
     
     private ItemWriter<Person> jdbcBatchItemWriter() {
@@ -91,7 +117,7 @@ public class ItemWriterConfiguration {
             .lineAggregator(lineAggregator)
             .headerCallback(writer -> writer.write("id,이름,나이,거주지"))
             .footerCallback(writer -> writer.write("----------------\n"))
-            .append(true) // true: 덮어쓰기가 아닌 이어쓰기
+//            .append(true) // true: 덮어쓰기가 아닌 이어쓰기
             .build();
         itemWriter.afterPropertiesSet();
     
@@ -110,8 +136,7 @@ public class ItemWriterConfiguration {
         for (int i = 0; i < 100; i++) {
             
             items.add(
-                Person.builder()
-                    .id(i + 1)
+                Person.builder() // ID를 직접 할당하지 않아야 JPA의 성능 이슈를 해결할 수 있다.
                     .name("test name" + i)
                     .age("test age")
                     .address("test address")
