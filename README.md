@@ -11,3 +11,6 @@
    - ItemReader 인터페이스의 구현체로 CustomItemReader 만들어 사용하기
 7. CSV 파일 데이터 읽기
    - FlatFileItemReader 클래스로 파일에 저장된 데이터를 읽어 객체에 매핑
+8. JDBC 데이터 읽기
+   - Cursor 기반 조회
+   - Paging 기반 조회
