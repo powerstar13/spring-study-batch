@@ -15,3 +15,5 @@
    - Cursor 기반 조회
    - Paging 기반 조회
 9. JPA 데이터 읽기
+10. CSV 파일 데이터 쓰기
+   - FlatFileItemWriter는 데이터가 매핑된 객체를 파일로 write
