@@ -19,3 +19,4 @@
    - FlatFileItemWriter는 데이터가 매핑된 객체를 파일로 write
 11. JDBC 데이터 쓰기
 12. JPA 데이터 쓰기
+13. ItemProcessor interface 구조 이해
