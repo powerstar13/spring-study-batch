@@ -1,4 +1,4 @@
-CREATE TABLE person (
+CREATE TABLE IF NOT EXISTS person (
     id      BIGINT PRIMARY KEY AUTO_INCREMENT,
     name    VARCHAR(255),
     age     VARCHAR(255),

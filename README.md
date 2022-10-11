@@ -14,3 +14,4 @@
 8. JDBC 데이터 읽기
    - Cursor 기반 조회
    - Paging 기반 조회
+9. JPA 데이터 읽기
