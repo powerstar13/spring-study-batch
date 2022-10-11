@@ -7,4 +7,5 @@
 3. Task 기반 배치와 Chunk 기반 배치
 4. JobParameters 사용
 5. @JobScope와 @StepScope 이해
-
+6. ItemReader interface 구조
+   - ItemReader 인터페이스의 구현체로 CustomItemReader 만들어 사용하기
