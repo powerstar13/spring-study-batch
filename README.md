@@ -9,3 +9,5 @@
 5. @JobScope와 @StepScope 이해
 6. ItemReader interface 구조
    - ItemReader 인터페이스의 구현체로 CustomItemReader 만들어 사용하기
+7. CSV 파일 데이터 읽기
+   - FlatFileItemReader 클래스로 파일에 저장된 데이터를 읽어 객체에 매핑
