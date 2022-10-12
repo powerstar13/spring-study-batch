@@ -38,3 +38,5 @@
     - 회원 데이터 H2 DB에 저장하기
     - 회원 주문 금액에 따른 등급 적용 Step 개발
     - JobExecutionListener로 대상 회원 데이터 로그와 실행 시간 측정
+20. 주문금액 집계 프로젝트
+    - User와 Orders Entity의 매핑 관계 개발

@@ -5,7 +5,9 @@ import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import spring.study.batch.part5.Orders;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,40 +34,64 @@ public class SaveUserTasklet implements Tasklet {
         List<User> users = new ArrayList<>();
     
         for (int i = 0; i < 100; i++) {
-    
+            // NORMAL
             users.add(
                 User.builder()
-                    .totalAmount(1_000) // NORMAL
+                    .orders(Collections.singletonList(
+                        Orders.builder()
+                            .itemName("item" + i)
+                            .amount(1_000)
+                            .createdDate(LocalDate.of(2020, 11, 1))
+                            .build()
+                    ))
                     .username("test username" + i)
                     .build()
             );
         }
     
         for (int i = 100; i < 200; i++) {
-            
+            // SILVER 등급
             users.add(
                 User.builder()
-                    .totalAmount(200_000) // SILVER 등급
+                    .orders(Collections.singletonList(
+                        Orders.builder()
+                            .itemName("item" + i)
+                            .amount(200_000)
+                            .createdDate(LocalDate.of(2020, 11, 2))
+                            .build()
+                    ))
                     .username("test username" + i)
                     .build()
             );
         }
     
         for (int i = 200; i < 300; i++) {
-            
+            // GOLD 등급
             users.add(
                 User.builder()
-                    .totalAmount(300_000) // GOLD 등급
+                    .orders(Collections.singletonList(
+                        Orders.builder()
+                            .itemName("item" + i)
+                            .amount(300_000)
+                            .createdDate(LocalDate.of(2020, 11, 3))
+                            .build()
+                    ))
                     .username("test username" + i)
                     .build()
             );
         }
     
         for (int i = 300; i < 400; i++) {
-            
+            // VIP 등급
             users.add(
                 User.builder()
-                    .totalAmount(500_000) // VIP 등급
+                    .orders(Collections.singletonList(
+                        Orders.builder()
+                            .itemName("item" + i)
+                            .amount(500_000)
+                            .createdDate(LocalDate.of(2020, 11, 4))
+                            .build()
+                    ))
                     .username("test username" + i)
                     .build()
             );
