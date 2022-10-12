@@ -50,7 +50,7 @@ public class SavePersonConfiguration {
         return this.stepBuilderFactory.get("savePersonStep")
             .<Person, Person>chunk(10)
             .reader(this.itemReader())
-            .processor(new DuplicateValidationProcessor<>(Person::getName, Boolean.parseBoolean(allowDuplicate)))
+            .processor(new DuplicateValidationProcessor<>(Person::getName, Boolean.parseBoolean(allowDuplicate))) // allowDuplicate가 null인 경우 기본적으로 false로 전달된다.
             .writer(this.itemWriter())
             .build();
     }

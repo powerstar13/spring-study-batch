@@ -25,3 +25,4 @@
     - ItemProcessor 작성
     - @JobScope 설정으로 jobParameters 사용하기
     - ItemWriter에서 JpaItemWriter 사용하고 log 출력
+15. 테스트 코드 작성하기
