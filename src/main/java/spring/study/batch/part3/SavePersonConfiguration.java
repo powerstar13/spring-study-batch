@@ -40,6 +40,8 @@ public class SavePersonConfiguration {
         return this.jobBuilderFactory.get("savePersonJob")
             .incrementer(new RunIdIncrementer())
             .start(this.savePersonStep(null))
+            .listener(new SavePersonListener.SavePersonJobExecutionListener())
+            .listener(new SavePersonListener.SavePersonAnnotationJobExecutionListener())
             .build();
     }
     
@@ -52,6 +54,7 @@ public class SavePersonConfiguration {
             .reader(this.itemReader())
             .processor(new DuplicateValidationProcessor<>(Person::getName, Boolean.parseBoolean(allowDuplicate))) // allowDuplicate가 null인 경우 기본적으로 false로 전달된다.
             .writer(this.itemWriter())
+            .listener(new SavePersonListener.SavePersonStepExecutionListener())
             .build();
     }
     

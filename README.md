@@ -26,3 +26,8 @@
     - @JobScope 설정으로 jobParameters 사용하기
     - ItemWriter에서 JpaItemWriter 사용하고 log 출력
 15. 테스트 코드 작성하기
+16. JobExecutionListener, StepExecutionListener
+    - JobExecutionListener 인터페이스를 구현하는 방법
+    - 애노테이션으로 정의하는 방법
+      - @BeforeJob, @AfterJob
+      - @BeforeStep, @AfterStep
