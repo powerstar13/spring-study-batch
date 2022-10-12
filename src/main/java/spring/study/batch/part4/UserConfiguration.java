@@ -34,6 +34,7 @@ public class UserConfiguration {
             .incrementer(new RunIdIncrementer())
             .start(this.saveUseStep())
             .next(this.userLevelUpStep())
+            .listener(new LevelUpJobExecutionListener(userRepository))
             .build();
     }
     
