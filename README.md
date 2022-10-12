@@ -36,3 +36,4 @@
     - RetryListener 인터페이스 구현체를 RetryTemplate 리스너에 등록
 19. 회원 등급 프로젝트 
     - 회원 데이터 H2 DB에 저장하기
+    - 회원 주문 금액에 따른 등급 적용 Step 개발
