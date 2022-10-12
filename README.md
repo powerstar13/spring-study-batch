@@ -20,3 +20,8 @@
 11. JDBC 데이터 쓰기
 12. JPA 데이터 쓰기
 13. ItemProcessor interface 구조 이해
+14. CSV 파일 데이터를 읽어 H2 DB에 데이터 저장하는 배치 개발
+    - ItemReader, ItemWriter 작성
+    - ItemProcessor 작성
+    - @JobScope 설정으로 jobParameters 사용하기
+    - ItemWriter에서 JpaItemWriter 사용하고 log 출력
