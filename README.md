@@ -31,3 +31,4 @@
     - 애노테이션으로 정의하는 방법
       - @BeforeJob, @AfterJob
       - @BeforeStep, @AfterStep
+17. Skip 예외 처리
