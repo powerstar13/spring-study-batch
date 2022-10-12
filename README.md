@@ -32,3 +32,5 @@
       - @BeforeJob, @AfterJob
       - @BeforeStep, @AfterStep
 17. Skip 예외 처리
+18. retry 예외 처리
+    - RetryListener 인터페이스 구현체를 RetryTemplate 리스너에 등록

@@ -76,7 +76,7 @@ public class SavePersonConfiguration {
         };
     
         CompositeItemProcessor<Person, Person> itemProcessor = new CompositeItemProcessorBuilder<Person, Person>()
-            .delegates(validationProcessor, duplicateValidationProcessor)
+            .delegates(new PersonValidationRetryProcessor(), validationProcessor, duplicateValidationProcessor) // PersonValidationRetryProcessor에 의해 Person.name이 모두 존재한 상태로 넘어가기 때문에 validationProcessor는 무의미하게 된다.
             .build();
         itemProcessor.afterPropertiesSet();
     
