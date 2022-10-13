@@ -40,7 +40,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserConfiguration {
     
-    private final int CHUNK = 100;
+    private final String JOB_NAME = "userJob";
+    private final int CHUNK = 1_000;
     
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -48,10 +49,10 @@ public class UserConfiguration {
     private final EntityManagerFactory entityManagerFactory;
     private final DataSource dataSource;
     
-    @Bean
+    @Bean(JOB_NAME)
     public Job userJob() throws Exception {
         
-        return jobBuilderFactory.get("userJob")
+        return jobBuilderFactory.get(JOB_NAME)
             .incrementer(new RunIdIncrementer())
             .start(this.saveUseStep())
             .next(this.userLevelUpStep())
@@ -63,11 +64,11 @@ public class UserConfiguration {
             .build();
     }
     
-    @Bean
+    @Bean(JOB_NAME + "_orderStatisticsStep")
     @JobScope
     public Step orderStatisticsStep(@Value("#{jobParameters[date]}") String date) throws Exception {
     
-        return stepBuilderFactory.get("orderStatisticsStep")
+        return stepBuilderFactory.get(JOB_NAME + "_orderStatisticsStep")
             .<OrderStatistics, OrderStatistics>chunk(CHUNK)
             .reader(this.orderStatisticsItemReader(date))
             .writer(this.orderStatisticsItemWriter(date))
@@ -92,7 +93,7 @@ public class UserConfiguration {
         lineAggregator.setFieldExtractor(fieldExtractor);
     
         FlatFileItemWriter<OrderStatistics> itemWriter = new FlatFileItemWriterBuilder<OrderStatistics>()
-            .name("orderStatisticsItemWriter")
+            .name(JOB_NAME + "_orderStatisticsItemWriter")
             .resource(new FileSystemResource("output/" + fileName))
             .encoding("UTF-8")
             .lineAggregator(lineAggregator)
@@ -115,7 +116,7 @@ public class UserConfiguration {
         sortKey.put("created_date", Order.ASCENDING);
     
         JdbcPagingItemReader<OrderStatistics> itemReader = new JdbcPagingItemReaderBuilder<OrderStatistics>()
-            .name("orderStatisticsItemReader")
+            .name(JOB_NAME + "_orderStatisticsItemReader")
             .dataSource(dataSource)
             .rowMapper((rs, rowNum) ->
                 OrderStatistics.builder()
@@ -136,18 +137,18 @@ public class UserConfiguration {
         return itemReader;
     }
     
-    @Bean
+    @Bean(JOB_NAME + "_saveUseStep")
     public Step saveUseStep() {
         
-        return stepBuilderFactory.get("saveUseStep")
+        return stepBuilderFactory.get(JOB_NAME + "_saveUseStep")
             .tasklet(new SaveUserTasklet(userRepository))
             .build();
     }
     
-    @Bean
+    @Bean(JOB_NAME + "_userLevelUpStep")
     public Step userLevelUpStep() throws Exception {
     
-        return stepBuilderFactory.get("userLevelUpStep")
+        return stepBuilderFactory.get(JOB_NAME + "_userLevelUpStep")
             .<User, User>chunk(CHUNK)
             .reader(this.itemReader())
             .processor(this.itemProcessor())
@@ -179,7 +180,7 @@ public class UserConfiguration {
             .queryString("SELECT u FROM users u")
             .entityManagerFactory(entityManagerFactory)
             .pageSize(CHUNK) // pageSize는 보통 chunk size와 동일하게 설정한다.
-            .name("userItemReader")
+            .name(JOB_NAME + "_userItemReader")
             .build();
         itemReader.afterPropertiesSet();
     

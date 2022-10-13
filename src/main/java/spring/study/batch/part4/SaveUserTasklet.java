@@ -15,6 +15,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SaveUserTasklet implements Tasklet {
     
+    private final int SIZE = 10_000;
+    
     private final UserRepository userRepository;
     
     @Override
@@ -33,7 +35,7 @@ public class SaveUserTasklet implements Tasklet {
     
         List<User> users = new ArrayList<>();
     
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < SIZE; i++) {
             // NORMAL
             users.add(
                 User.builder()
@@ -49,7 +51,7 @@ public class SaveUserTasklet implements Tasklet {
             );
         }
     
-        for (int i = 100; i < 200; i++) {
+        for (int i = 0; i < SIZE; i++) {
             // SILVER 등급
             users.add(
                 User.builder()
@@ -65,7 +67,7 @@ public class SaveUserTasklet implements Tasklet {
             );
         }
     
-        for (int i = 200; i < 300; i++) {
+        for (int i = 0; i < SIZE; i++) {
             // GOLD 등급
             users.add(
                 User.builder()
@@ -81,7 +83,7 @@ public class SaveUserTasklet implements Tasklet {
             );
         }
     
-        for (int i = 300; i < 400; i++) {
+        for (int i = 0; i < SIZE; i++) {
             // VIP 등급
             users.add(
                 User.builder()
