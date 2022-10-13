@@ -22,6 +22,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-batch'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.batch:spring-batch-integration' // Async를 사용하기 위함
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 

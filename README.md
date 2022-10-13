@@ -44,3 +44,4 @@
     - JobExecutionDecider로 주문 금액 집계 Step 실행 여부 결정
 21. 성능 개선과 성능 비교
     - 성능 개선 계획
+    - Async Step 적용
