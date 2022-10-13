@@ -45,3 +45,5 @@
 21. 성능 개선과 성능 비교
     - 성능 개선 계획
     - Async Step 적용
+    - Multi-Thread Step 적용
+    - Partition Step 적용
