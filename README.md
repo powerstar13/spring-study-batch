@@ -47,3 +47,4 @@
     - Async Step 적용
     - Multi-Thread Step 적용
     - Partition Step 적용
+    - Parallel Step 적용하기
