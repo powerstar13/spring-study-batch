@@ -41,3 +41,4 @@
 20. 주문금액 집계 프로젝트
     - User와 Orders Entity의 매핑 관계 개발
     - 일별 주문 금액 집계 Step 개발
+    - JobExecutionDecider로 주문 금액 집계 Step 실행 여부 결정

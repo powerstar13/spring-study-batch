@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
+import spring.study.batch.part5.JobParametersDecide;
 import spring.study.batch.part5.OrderStatistics;
 
 import javax.persistence.EntityManagerFactory;
@@ -54,8 +55,11 @@ public class UserConfiguration {
             .incrementer(new RunIdIncrementer())
             .start(this.saveUseStep())
             .next(this.userLevelUpStep())
-            .next(this.orderStatisticsStep(null))
             .listener(new LevelUpJobExecutionListener(userRepository))
+            .next(new JobParametersDecide("date")) // JobParameters로 date값에 따라 status가 결정됨
+            .on(JobParametersDecide.CONTINUE.getName()) // status값이 CONTINUE인 경우에만 to() 메서드가 작동됨
+            .to(this.orderStatisticsStep(null))
+            .build()
             .build();
     }
     
