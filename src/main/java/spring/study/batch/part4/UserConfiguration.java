@@ -59,24 +59,27 @@ public class UserConfiguration {
             .listener(new LevelUpJobExecutionListener(userRepository))
             .next(new JobParametersDecide("date")) // JobParameters로 date값에 따라 status가 결정됨
             .on(JobParametersDecide.CONTINUE.getName()) // status값이 CONTINUE인 경우에만 to() 메서드가 작동됨
-            .to(this.orderStatisticsStep(null))
+            .to(this.orderStatisticsStep(null, null))
             .build()
             .build();
     }
     
     @Bean(JOB_NAME + "_orderStatisticsStep")
     @JobScope
-    public Step orderStatisticsStep(@Value("#{jobParameters[date]}") String date) throws Exception {
+    public Step orderStatisticsStep(
+        @Value("#{jobParameters[date]}") String date,
+        @Value("#{jobParameters[path]}") String path
+    ) throws Exception {
     
         return stepBuilderFactory.get(JOB_NAME + "_orderStatisticsStep")
             .<OrderStatistics, OrderStatistics>chunk(CHUNK)
             .reader(this.orderStatisticsItemReader(date))
-            .writer(this.orderStatisticsItemWriter(date))
+            .writer(this.orderStatisticsItemWriter(date, path))
             .build();
             
     }
     
-    private ItemWriter<? super OrderStatistics> orderStatisticsItemWriter(String date) throws Exception {
+    private ItemWriter<? super OrderStatistics> orderStatisticsItemWriter(String date, String path) throws Exception {
     
         YearMonth yearMonth = YearMonth.parse(date);
     
@@ -94,7 +97,7 @@ public class UserConfiguration {
     
         FlatFileItemWriter<OrderStatistics> itemWriter = new FlatFileItemWriterBuilder<OrderStatistics>()
             .name(JOB_NAME + "_orderStatisticsItemWriter")
-            .resource(new FileSystemResource("output/" + fileName))
+            .resource(new FileSystemResource(path + fileName))
             .encoding("UTF-8")
             .lineAggregator(lineAggregator)
             .headerCallback(writer -> writer.write("total_amount,date"))
